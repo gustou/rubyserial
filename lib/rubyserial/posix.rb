@@ -2,7 +2,7 @@ require 'ffi'
 
 class Serial
   def initialize(address, baude_rate=9600, data_bits=8)
-    file_opts = RubySerial::Posix::O_RDWR | RubySerial::Posix::O_NOCTTY | RubySerial::Posix::O_NONBLOCK
+    file_opts = RubySerial::Posix::O_RDWR | RubySerial::Posix::O_NOCTTY
     @fd = RubySerial::Posix.open(address, file_opts)
 
     if @fd == -1
@@ -13,11 +13,6 @@ class Serial
 
     fl = RubySerial::Posix.fcntl(@fd, RubySerial::Posix::F_GETFL, :int, 0)
     if fl == -1
-      raise RubySerial::Exception, RubySerial::Posix::ERROR_CODES[FFI.errno]
-    end
-
-    err = RubySerial::Posix.fcntl(@fd, RubySerial::Posix::F_SETFL, :int, ~RubySerial::Posix::O_NONBLOCK & fl)
-    if err == -1
       raise RubySerial::Exception, RubySerial::Posix::ERROR_CODES[FFI.errno]
     end
 
